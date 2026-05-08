@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const mongoose = require('mongoose')
 const dns = require('dns')
+const User = require('./models/user')
 require('dotenv').config();
 
 
@@ -36,15 +37,51 @@ const connectDB = async () => {
     }
 };
 
-// connectDB().then(() => {
-//     app.listen(port, () => {
-//         console.log(`Server running on port ${port}`);
-//     });
+connectDB().then(() => {
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    });
+});
+
+
+
+
+app.get('/signup', (req, res) => {
+    res.render('signup');
+});
+
+
+app.post('/signup', async (req, res) => {
+    const { fullName, email, password } = req.body;
+    try {
+        const newUser = new User({
+            fullName,
+            email,
+            password
+        });
+        await newUser.save();
+        res.send("User saved successfully!");
+    }
+    catch (err) {
+        console.log("Error details:", err);
+    }
+});
+
+
+
+
+// app.post('/signup', async (req, res) => {
+//     console.log("I hit the POST route");
+//     try {
+//         res.send("It worked");
+//     } catch (err) {
+//         res.status(500).send(err.message);
+//     }
 // });
 
 
 
-app.get("/", (req, res) => {
-    console.log(`I am running on port ${port}`); 
-    res.send("Welcome to my Online Course platform");
-});
+// app.listen(PORT, () => {
+//     console.log(`I am running on port ${port}`);
+//     // res.send("Welcome to my Online Course platform");
+// });
